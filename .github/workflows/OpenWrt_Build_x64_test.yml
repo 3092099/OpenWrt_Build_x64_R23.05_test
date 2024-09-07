@@ -127,7 +127,8 @@ jobs:
         ls -Ahl
     - name: 发布固件
       id: create_release
-      uses: ncipollo/release-action@main
+      #uses: ncipollo/release-action@main
+      uses: ncipollo/release-action@v1
       with:
         name: OpenWrt_x64_test
         allowUpdates: true
@@ -135,7 +136,9 @@ jobs:
         tag: ${{ env.latest_release }}
         commit: 23.05
         replacesArtifacts: true
-        token: ${{ secrets.GITHUB_TOKEN }}
+        #token: ${{ secrets.GITHUB_TOKEN }}
+        token: ${{ secrets.REPO_TOKEN }}
+        body: 编译完成时间：$(date +%Y年%m月%d日)
         artifacts: ./artifact/*.zip
     - name: 检查磁盘空间
       run: df -h
