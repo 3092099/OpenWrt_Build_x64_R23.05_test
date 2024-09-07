@@ -1,4 +1,4 @@
-name: Cleaning
+name: 清理旧固件、旧版本、过期工作流
 
 on:
   schedule:
@@ -10,7 +10,7 @@ jobs:
   Cleanup-Old-Releases:
     runs-on: ubuntu-24.04
     steps:  
-    - name: Delete Older Releases
+    - name: 清理旧版本
       uses: dev-drprasad/delete-older-releases@master
       with:
         keep_latest: 20
@@ -21,7 +21,7 @@ jobs:
   Cleanup-Old-Artifacts:
     runs-on: ubuntu-24.04
     steps:
-    - name: Cleanup Old Action Artifacts
+    - name: 清理旧固件
       uses: c-hive/gha-remove-artifacts@master
       with:
           age: '3 days'
@@ -30,7 +30,7 @@ jobs:
   Cleanup-Workflow-Logs:
     runs-on: ubuntu-24.04
     steps:
-      - name: Cleanup Workflow Logs
+      - name: 清理过期工作流
         uses: Mattraks/delete-workflow-runs@main
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
