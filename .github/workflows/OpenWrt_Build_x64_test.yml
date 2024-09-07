@@ -1,4 +1,4 @@
-name: OpenWrt_Build_x64_test(编译OpenWrt官方源码)
+name: OpenWrt_Build_x64_test(编译官方源码)
 
 on:
 #  schedule:
