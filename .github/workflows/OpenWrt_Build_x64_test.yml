@@ -1,4 +1,4 @@
-name: OpenWrt_Build_x64_test
+name: 编译OpenWrt_Build_x64_test（官方源码）
 
 on:
 #  schedule:
@@ -13,11 +13,11 @@ jobs:
     if: github.event.repository.owner.id == github.event.sender.id
 
     steps:
-    - name: Show system
+    - name: 编译系统信息
       run: |
         echo -e "Total CPU cores\t: $(nproc)"
         cat /proc/cpuinfo | grep 'model name'
-    - name: Maximize build space
+    - name: 构建空间最大化的编译环境
       uses: easimon/maximize-build-space@master
       with:
         swap-size-mb: 1024
@@ -27,7 +27,7 @@ jobs:
         remove-android: 'true'
         remove-haskell: 'true'
         remove-codeql: 'true'
-    - name: Checkout
+    - name: 部署编译环境
       uses: actions/checkout@main
     - name: Init build dependencies
       env:
@@ -43,57 +43,57 @@ jobs:
         sudo -E git config --global user.name 'GitHub Actions' && git config --global user.email 'noreply@github.com'
         sudo -E git config --global core.abbrev auto
         df -h
-    - name: Prepare Mixedwrt
+    - name: 下载OpenWrt_Build_x64_test编译源码
       run: |
         sudo chown -R runner:runner /home/runner/work/OpenWrt_Build_x64_test
         cp -r ./SCRIPTS/X86/. ./SCRIPTS/
         cp -r ./SCRIPTS/. ./
         /bin/bash 01_get_ready.sh
-    - name: Prepare Package
+    - name: 加载自定义设置
       working-directory: ${{ github.workspace }}/openwrt
       run: |
         cp -r ../SCRIPTS/. ./
         /bin/bash 02_prepare_package.sh
         /bin/bash 02_target_only.sh
         /bin/bash 04_remove_upx.sh
-    - name: QTMDFW4
+    - name: 下载.config配置文件
       working-directory: ${{ github.workspace }}/openwrt
       run: |
         cp -rf ../SEED/X86/x64_test.config .config
-    - name: Convert Translation
+    - name: 更新插件源
       working-directory: ${{ github.workspace }}/openwrt
       run: |
         /bin/bash 03_convert_translation.sh
-    - name: Add ACL
+    - name: 添加ACL
       working-directory: ${{ github.workspace }}/openwrt
       run: |
         /bin/bash 05_create_acl_for_luci.sh -a
-    - name: Fix Permissions
+    - name: 权限修复
       working-directory: ${{ github.workspace }}/openwrt
       run: |
         sudo -E chmod -R 755 ./08_fix_permissions.sh
         /bin/bash 08_fix_permissions.sh
-    - name: Make Config
+    - name: 生成.config配置
       working-directory: ${{ github.workspace }}/openwrt
       run: |
         make defconfig
-    - name: Get Architecture
+    - name: 获取架构
       working-directory: ${{ github.workspace }}/openwrt
       run: |
         TARGET_DEVICE_ARCH="$(grep "^CONFIG_TARGET_.*_.*=y$" ".config" | head -n 1 | sed 's/^CONFIG_TARGET_//g' | awk -F '_' '{print $1}')"
         echo "TARGET_DEVICE_ARCH=${TARGET_DEVICE_ARCH}" >>$GITHUB_ENV
         latest_release="$(curl -s https://github.com/openwrt/openwrt/tags | grep -Eo "v[0-9\.]+\-*r*c*[0-9]*.tar.gz" | sed -n '/[2-9][3-9]/p' | sed -n 1p | sed 's/.tar.gz//g' | sed 's/v//g')"
         echo "latest_release=${latest_release}" >>$GITHUB_ENV
-    - name: Cache
+    - name: 缓存加速
       uses: HiGarfield/cachewrtbuild@main
       with:
         mixkey: ${{ env.TARGET_DEVICE_ARCH }}
         prefix: ${{ github.workspace }}/openwrt
-    - name: Make Download
+    - name: 下载软件包
       working-directory: ${{ github.workspace }}/openwrt
       run: |
         make download -j50
-    - name: Compile Openwrt
+    - name: 开始编译固件
       working-directory: ${{ github.workspace }}/openwrt
       id: compileopenwrt
       continue-on-error: true
@@ -101,14 +101,14 @@ jobs:
         #echo | make kernel_oldconfig -j$(($(nproc) + 1)) 
         IGNORE_ERRORS=1 make -j$(($(nproc) + 1))
         echo $?
-    - name: If Error
+    - name: 检查错误
       working-directory: ${{ github.workspace }}/openwrt
       if: steps.compileopenwrt.outcome == 'failure'
       run: |
         cat ./.config
         echo '================================================================'
         make -j1 V=s
-    - name: Organize files
+    - name: 整理固件文件夹
       id: organize
       run: |
         rm -rf ./artifact/
@@ -125,7 +125,7 @@ jobs:
         zip X86-GC404-Docker-$(date +%Y-%m-%d)-${{ env.latest_release }}-ext4.zip *ext4-combined*
         zip X86-GC404-Docker-$(date +%Y-%m-%d)-${{ env.latest_release }}-sfs.zip *squashfs-combined*
         ls -Ahl
-    - name: Create release
+    - name: 发布固件
       id: create_release
       uses: ncipollo/release-action@main
       with:
@@ -137,5 +137,5 @@ jobs:
         replacesArtifacts: true
         token: ${{ secrets.GITHUB_TOKEN }}
         artifacts: ./artifact/*.zip
-    - name: Print Disk Space After
+    - name: 检查磁盘空间
       run: df -h
