@@ -129,7 +129,7 @@ jobs:
       id: create_release
       uses: ncipollo/release-action@main
       with:
-        name: OpenWrt_x64_test_${{ env.latest_release }}
+        name: OpenWrt_x64_test
         allowUpdates: true
         prerelease: false
         tag: ${{ env.latest_release }}
