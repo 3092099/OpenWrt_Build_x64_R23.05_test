@@ -13,7 +13,7 @@ jobs:
     if: github.event.repository.owner.id == github.event.sender.id
 
     steps:
-    - name: 编译系统信息
+    - name: 编译环境CPU型号检测
       run: |
         echo -e "Total CPU cores\t: $(nproc)"
         cat /proc/cpuinfo | grep 'model name'
@@ -27,9 +27,9 @@ jobs:
         remove-android: 'true'
         remove-haskell: 'true'
         remove-codeql: 'true'
-    - name: 部署编译环境
+    - name: 准备结束
       uses: actions/checkout@main
-    - name: Init build dependencies
+    - name: 开始部署编译环境
       env:
         DEBIAN_FRONTEND: noninteractive
       run: |
