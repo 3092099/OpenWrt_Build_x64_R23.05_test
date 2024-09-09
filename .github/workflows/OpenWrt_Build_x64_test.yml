@@ -127,8 +127,7 @@ jobs:
         ls -Ahl
     - name: 发布固件
       id: create_release
-      #uses: ncipollo/release-action@main
-      uses: ncipollo/release-action@v1
+      uses: ncipollo/release-action@main
       with:
         name: OpenWrt_x64_test
         allowUpdates: true
