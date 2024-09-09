@@ -527,4 +527,8 @@ sed -i 's,no-mips16 gc-sections,no-mips16 gc-sections no-lto,g' package/libs/ope
 sed -i 's,gc-sections,gc-sections no-lto,g' feeds/packages/net/nginx/Makefile
 # libsodium
 sed -i 's,no-mips16,no-mips16 no-lto,g' feeds/packages/libs/libsodium/Makefile
+
+# 修改默认 IP 地址
+sed -i 's/192.168.1.1/192.168.1.11/g' package/base-files/files/bin/config_generate
+
 #exit 0
