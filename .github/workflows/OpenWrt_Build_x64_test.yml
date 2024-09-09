@@ -7,6 +7,11 @@ on:
   watch:
     types: started
 
+env:
+  REPO_TOKEN: ${{ secrets.REPO_TOKEN }}
+  PUSH_PLUS_TOKEN: ${{ secrets.PUSH_PLUS_TOKEN }}
+  TZ: Asia/Shanghai
+
 jobs:
   build:
     runs-on: ubuntu-24.04
@@ -101,7 +106,7 @@ jobs:
         #echo | make kernel_oldconfig -j$(($(nproc) + 1)) 
         IGNORE_ERRORS=1 make -j$(($(nproc) + 1))
         echo $?
-    - name: 检查错误
+    - name: 检查编译过程的错误
       working-directory: ${{ github.workspace }}/openwrt
       if: steps.compileopenwrt.outcome == 'failure'
       run: |
@@ -113,18 +118,17 @@ jobs:
       run: |
         rm -rf ./artifact/
         mkdir -p ./artifact/
-        mv openwrt/bin/targets/x86/64/*combined-efi.img* ./artifact/
-        #mv openwrt/bin/targets/x86/64/*combined*.img* ./artifact/
+        #mv openwrt/bin/targets/x86/64/*combined-efi.img* ./artifact/
+        mv openwrt/bin/targets/x86/64/openwrt-x86-64-generic-squashfs-combined*.img ./artifact/
         cd ./artifact/
         ls -Ahl
         gzip -d *.gz && exit 0
         gzip --best *.img
-        #rename -v "s/^openwrt/OpenWrt_x64_test_$(date +%Y-%m%d-%H%M)/" *
         ls -Ahl
-        sha256sum openwrt*x86* | tee X86-GC404-$(date +%Y-%m-%d)-${{ env.latest_release }}.sha256sum
-        zip X86-GC404-Docker-$(date +%Y-%m-%d)-${{ env.latest_release }}-ext4.zip *ext4-combined*
-        zip X86-GC404-Docker-$(date +%Y-%m-%d)-${{ env.latest_release }}-sfs.zip *squashfs-combined*
-        ls -Ahl
+        #sha256sum openwrt*x86* | tee X86-GC404-$(date +%Y-%m-%d)-${{ env.latest_release }}.sha256sum
+        #zip X86-GC404-Docker-$(date +%Y-%m-%d)-${{ env.latest_release }}-ext4.zip *ext4-combined*
+        #zip X86-GC404-Docker-$(date +%Y-%m-%d)-${{ env.latest_release }}-sfs.zip *squashfs-combined*
+        #ls -Ahl
     - name: 发布固件
       id: create_release
       uses: ncipollo/release-action@main
@@ -140,3 +144,6 @@ jobs:
         artifacts: ./artifact/*.zip
     - name: 检查磁盘空间
       run: df -h
+    - name: Telegram或pushplus信息通知
+      run: |
+        curl -k --data token="${{ secrets.PUSH_PLUS_TOKEN }}" --data title="【${{env.WAREHOUSE_MAN}}】编译成功" --data "content=我亲爱的✨主人✨：您使用【${{matrix.target}}】文件夹编译【${REPO_BRANCH}分支的${{env.TARGET_PROFILE}}】固件顺利编译完成了✌️💯💐(${{env.WAREHOUSE_MAN}}仓库的#${{env.RUN_NUMBER}}号)！($(date +%Y年%m月%d号%H时%M分))" "http://www.pushplus.plus/send"
