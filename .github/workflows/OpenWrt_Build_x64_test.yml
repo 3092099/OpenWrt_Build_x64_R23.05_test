@@ -132,20 +132,17 @@ jobs:
     - name: 上传固件在 github Artifacts
       uses: actions/upload-artifact@main
       with:
-        name: OpenWrt_x64_test-$(date +%Y-%m-%d)
+        name: OpenWrt_x64_test-$(date +"%Y.%m.%d-%H%M")
         path: ./artifact/
     - name: 发布固件
       id: create_release
       uses: ncipollo/release-action@main
       with:
         name: OpenWrt_x64_test
-        allowUpdates: true
-        prerelease: false
-        tag: ${{ env.latest_release }}
-        commit: 23.05
-        replacesArtifacts: true
-        body: 编译完成时间：$(date +%Y-%m-%d)
+        tag: OpenWrt_x64_test
         token: ${{ secrets.REPO_TOKEN }}
+        allowUpdates: true
+        body: 编译完成时间：$(date +"%Y.%m.%d-%H%M")
         artifacts: ./artifact/*.zip
     - name: 检查磁盘空间
       run: df -h
