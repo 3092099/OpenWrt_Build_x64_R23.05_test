@@ -120,7 +120,7 @@ jobs:
         rm -rf ./artifact/
         mkdir -p ./artifact/
         mv openwrt/bin/targets/x86/64/openwrt-x86-64-generic-squashfs-combined.img.gz ./artifact/
-        mv openwrt/bin/targets/x86/64/oopenwrt-x86-64-generic-squashfs-combined-efi.img.gz ./artifact/
+        mv openwrt/bin/targets/x86/64/openwrt-x86-64-generic-squashfs-combined-efi.img.gz ./artifact/
         cd ./artifact/
         ls -Ahl
         gzip -d *.gz && exit 0
