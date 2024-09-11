@@ -125,6 +125,9 @@ jobs:
         gzip -d *.gz && exit 0
         gzip --best *.img
         ls -Ahl
+        zip OpenWrt_x64_test-$(date +%Y-%m-%d)-${{ env.latest_release }}.zip *legacy*.img.gz
+        zip OpenWrt_x64_test-$(date +%Y-%m-%d)-${{ env.latest_release }}-efi.zip *efi*.img.gz
+        ls -Ahl
     - name: 上传固件在 github Artifacts
       uses: actions/upload-artifact@main
       with:
@@ -138,8 +141,8 @@ jobs:
         tag: OpenWrt_x64_test
         token: ${{ secrets.REPO_TOKEN }}
         allowUpdates: true
-        #body: 编译完成时间：$(date +"%Y.%m.%d-%H%M")
-        artifacts: ./artifact/*
+        body: 编译完成时间：$(date +%Y-%m-%d)
+        artifacts: ./artifact/*.zip
     - name: 检查磁盘空间
       run: df -h
     - name: Telegram或pushplus信息通知
