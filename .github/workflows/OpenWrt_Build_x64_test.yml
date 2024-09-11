@@ -139,7 +139,7 @@ jobs:
         token: ${{ secrets.REPO_TOKEN }}
         allowUpdates: true
         #body: 编译完成时间：$(date +"%Y.%m.%d-%H%M")
-        artifacts: ./artifact/*.zip
+        artifacts: ./artifact/*
     - name: 检查磁盘空间
       run: df -h
     - name: Telegram或pushplus信息通知
