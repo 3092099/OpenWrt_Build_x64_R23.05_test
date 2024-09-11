@@ -128,8 +128,10 @@ jobs:
         ls -Ahl
         #zip OpenWrt_x64_test-$(date +%Y-%m-%d)-${{ env.latest_release }}.zip *combined.img.gz
         #zip OpenWrt_x64_test-$(date +%Y-%m-%d)-${{ env.latest_release }}-efi.zip *combined-efi.img.gz
-        zip OpenWrt-${{ env.latest_release }}-x64_test-$(date +%Y%m%d%H%M).zip *combined.img.gz
-        zip OpenWrt-${{ env.latest_release }}-x64_test-$(date +%Y%m%d%H%M)-efi.zip *combined-efi.img.gz
+        zip OpenWrt-x64_测试版-$(date +%Y%m%d%H%M).zip *combined.img.gz
+        zip OpenWrt-x64_测试版-$(date +%Y%m%d%H%M)-efi.zip *combined-efi.img.gz
+        rm -rf openwrt-x86-64-generic-squashfs-combined.img.gz
+        rm -rf openwrt-x86-64-generic-squashfs-combined-efi.img.gz
         ls -Ahl
     - name: 上传固件在 github Artifacts
       uses: actions/upload-artifact@main
