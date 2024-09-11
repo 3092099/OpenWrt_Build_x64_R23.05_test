@@ -54,7 +54,7 @@ jobs:
         cp -r ./SCRIPTS/X86/. ./SCRIPTS/
         cp -r ./SCRIPTS/. ./
         /bin/bash 01_get_ready.sh
-    - name: 加载自定义设置
+    - name: 编译预处理
       working-directory: ${{ github.workspace }}/openwrt
       run: |
         cp -r ../SCRIPTS/. ./
@@ -126,8 +126,6 @@ jobs:
         gzip -d *.gz && exit 0
         gzip --best *.img
         ls -Ahl
-        #zip OpenWrt_x64_test-$(date +%Y-%m-%d)-${{ env.latest_release }}.zip *combined.img.gz
-        #zip OpenWrt_x64_test-$(date +%Y-%m-%d)-${{ env.latest_release }}-efi.zip *combined-efi.img.gz
         zip OpenWrt-x64_测试版-$(date +%Y%m%d%H%M).zip *combined.img.gz
         zip OpenWrt-x64_测试版-$(date +%Y%m%d%H%M)-efi.zip *combined-efi.img.gz
         rm -rf openwrt-x86-64-generic-squashfs-combined.img.gz
