@@ -1,40 +1,30 @@
-name: 清理旧固件、旧版本、过期工作流
-
+name: 删除releases，清理旧版本
 on:
-  schedule:
-    - cron: 1 1 * * 1
+  #定时触发开始编译(把下面两个#去掉开启,时间设置请看定时编译说明)
+  #schedule:
+    #- cron: 50 1 * * 5
+
   workflow_dispatch:
 
 jobs:
-  
-  Cleanup-Old-Releases:
-    runs-on: ubuntu-24.04
-    steps:  
-    - name: 清理旧版本
-      uses: dev-drprasad/delete-older-releases@master
-      with:
-        keep_latest: 20
-        delete_tags: true
-      env:
-        #GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        GITHUB_TOKEN: ${{ secrets.REPO_TOKEN }}
-
-  Cleanup-Old-Artifacts:
-    runs-on: ubuntu-24.04
+  del_releases:
+    runs-on: Ubuntu-22.04
+    name: delete-releases-runs
     steps:
-    - name: 清理旧固件
-      uses: c-hive/gha-remove-artifacts@master
-      with:
-          age: '3 days'
-          skip-recent: 3
-        
-  Cleanup-Workflow-Logs:
-    runs-on: ubuntu-24.04
-    steps:
-      - name: 清理过期工作流
-        uses: Mattraks/delete-workflow-runs@main
+    
+      - name: 删除releases，清理旧版本
+        uses: dev-drprasad/delete-older-releases@v0.2.0
         with:
-          #token: ${{ secrets.GITHUB_TOKEN }}
+          repo: ${{ github.repository }}
+          keep_latest: 0
+          delete_tags: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.REPO_TOKEN }}
+
+      - name: 删除workflow，清理工作流
+        uses: Mattraks/delete-workflow-runs@v2
+        with:
           token: ${{ secrets.REPO_TOKEN }}
           repository: ${{ github.repository }}
-          retain_days: 3
+          retain_days: 0
+          keep_minimum_runs: 0
