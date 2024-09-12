@@ -144,10 +144,10 @@ jobs:
         tag: OpenWrt_x64_test
         token: ${{ secrets.REPO_TOKEN }}
         allowUpdates: true
-        body: 编译完成时间：$(date +%Y年%m月%d日%H时%M分)
+        body: 编译完成时间：$(date +%Y%m%d%H%M)
         artifacts: ./artifact/*.zip
     - name: 检查磁盘空间
       run: df -h
     - name: Telegram或pushplus信息通知
       run: |
-        curl -k --data token="${{ secrets.PUSH_PLUS_TOKEN }}" --data title="【${{env.WAREHOUSE_MAN}}】编译成功" --data "content=我亲爱的✨主人✨：您使用【${{matrix.target}}】文件夹编译【${REPO_BRANCH}分支的${{env.TARGET_PROFILE}}】固件顺利编译完成了✌️💯💐(${{env.WAREHOUSE_MAN}}仓库的#${{env.RUN_NUMBER}}号)！($(date +%Y年%m月%d日%H时%M分))" "http://www.pushplus.plus/send"
+        curl -k --data token="${{ secrets.PUSH_PLUS_TOKEN }}" --data title="【${{env.WAREHOUSE_MAN}}】编译成功" --data "content=我亲爱的✨主人✨：您使用【${{matrix.target}}】文件夹编译【${REPO_BRANCH}分支的${{env.TARGET_PROFILE}}】固件顺利编译完成了✌️💯💐(${{env.WAREHOUSE_MAN}}仓库的#${{env.RUN_NUMBER}}号)！($(date +%Y%m%d%H%M))" "http://www.pushplus.plus/send"
